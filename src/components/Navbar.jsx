@@ -4,8 +4,8 @@ import { useWindowScroll } from "react-use";
 import { useEffect, useRef, useState } from "react";
 import { TiLocationArrow } from "react-icons/ti";
 import { Link } from "react-router-dom";
-
 import Button from "./Button";
+import { useStateContext } from "../contexts/ContextProvider";
 
 const navItems = ["Nexus", "Vault", "Prologue", "About", "Contact"];
 
@@ -19,7 +19,7 @@ const NavBar = () => {
   const navContainerRef = useRef(null);
 
   const { y: currentScrollY } = useWindowScroll();
-  const [isNavVisible, setIsNavVisible] = useState(true);
+  const { setIsNavVisible, isNavVisible } = useStateContext();
   const [lastScrollY, setLastScrollY] = useState(0);
 
   // Toggle audio and visual indicator
@@ -53,7 +53,7 @@ const NavBar = () => {
     }
 
     setLastScrollY(currentScrollY);
-  }, [currentScrollY, lastScrollY]);
+  }, [currentScrollY, lastScrollY, setIsNavVisible]);
 
   useEffect(() => {
     gsap.to(navContainerRef.current, {
@@ -88,7 +88,7 @@ const NavBar = () => {
               {navItems.map((item, index) => (
                 <a
                   key={index}
-                  href={`/${item.toLowerCase()}`}
+                  href={`#${item.toLowerCase()}`}
                   className="nav-hover-btn"
                 >
                   {item}

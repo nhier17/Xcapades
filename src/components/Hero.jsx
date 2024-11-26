@@ -3,9 +3,10 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { TiLocationArrow } from "react-icons/ti";
 import { useEffect, useRef, useState } from "react";
-
+import { useStateContext } from "../contexts/ContextProvider";
 import Button from "./Button";
 import VideoPreview from "./VideoPreview";
+import VideoTrailer from "./VideoTrailer";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +16,21 @@ const Hero = () => {
 
   const [loading, setLoading] = useState(true);
   const [loadedVideos, setLoadedVideos] = useState(0);
+
+  const { isTrailerOpen, setIsTrailerOpen, setIsPlaying } = useStateContext();
+  const videoRef = useRef(null);
+
+  const handleWatchTrailer = () => {
+    setIsTrailerOpen((prev) => !prev);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } 
+  };
+
+  const handleCloseTrailer = () => {
+    setIsTrailerOpen(false);
+  };
 
   const totalVideos = 4;
   const nextVdRef = useRef(null);
@@ -34,6 +50,13 @@ const Hero = () => {
 
     setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
   };
+
+  const videoTitles = [
+    <>G<b>A</b>MING</>,
+    <>IDE<b>N</b>TITY</>,
+    <>RE<b>A</b>LITY</>,
+    <>LIF<b>E</b>STYLE</>,
+  ];
 
   useGSAP(
     () => {
@@ -140,7 +163,7 @@ const Hero = () => {
         </div>
 
         <h1 className="special-font hero-heading absolute bottom-5 right-5 z-40 text-blue-75">
-          G<b>A</b>MING
+          {videoTitles[currentIndex - 1]}
         </h1>
 
         <div className="absolute left-0 top-0 z-40 size-full">
@@ -158,13 +181,22 @@ const Hero = () => {
               title="Watch trailer"
               leftIcon={<TiLocationArrow />}
               containerClass="bg-yellow-300 flex-center gap-1"
+              onClick={handleWatchTrailer}
             />
+
+            {isTrailerOpen && (
+              <VideoTrailer
+                onClose={handleCloseTrailer}
+                videoRef={videoRef}
+                videoSrc="videos/trailer.mp4"
+              />
+            )}
           </div>
         </div>
       </div>
 
       <h1 className="special-font hero-heading absolute bottom-5 right-5 text-black">
-        G<b>A</b>MING
+        {videoTitles[currentIndex - 1]}
       </h1>
     </div>
   );
